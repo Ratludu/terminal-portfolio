@@ -2,21 +2,335 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>My Portfolio</title>
-        <link rel="stylesheet" href="style.css" />
+        <title>Terminal Portfolio</title>
+        <style>
+            /* Catppuccin Mocha Color Palette */
+            :root {
+                --base: #1e1e2e;
+                --text: #cdd6f4;
+                --blue: #89b4fa;
+                --green: #a6e3a1;
+                --yellow: #f9e2af;
+                --red: #f38ba8;
+                --lavender: #b4befe;
+                --teal: #94e2d5;
+                --peach: #fab387;
+            }
+            body {
+                background-color: var(--base);
+                color: var(--text);
+                font-family: "Courier New", monospace;
+                margin: 0;
+                padding: 20px;
+                line-height: 1.6;
+            }
+            #terminal {
+                background-color: rgba(30, 30, 46, 0.9);
+                border: 2px solid var(--blue);
+                border-radius: 10px;
+                height: 600px;
+                overflow-y: scroll;
+                padding: 15px;
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+            #input-line {
+                display: flex;
+            }
+            #input-line::before {
+                content: "➜";
+                color: var(--green);
+                margin-right: 10px;
+            }
+            #command-input {
+                background: transparent;
+                border: none;
+                color: var(--text);
+                font-family: "Courier New", monospace;
+                font-size: 16px;
+                outline: none;
+                width: 100%;
+            }
+            .output {
+                color: var(--text);
+            }
+            .error {
+                color: var(--red);
+            }
+            .command {
+                color: var(--blue);
+            }
+            .project-name {
+                color: var(--lavender);
+                font-weight: bold;
+            }
+            .project-description {
+                color: var(--text);
+            }
+            .project-repo {
+                color: var(--green);
+                text-decoration: underline;
+            }
+        </style>
     </head>
     <body>
-        <div class="terminal">
-            <pre id="terminal-output" class="output"></pre>
-            <input
-                type="text"
-                id="user-input"
-                class="input"
-                placeholder="Type 'help' for commands"
-            />
+        <div id="terminal">
+            <div id="output"></div>
+            <div id="input-line">
+                <input type="text" id="command-input" autocomplete="off" />
+            </div>
         </div>
-
-        <script src="script.js"></script>
+        <script>
+            // Terminal configuration
+            const terminal = {
+                output: document.getElementById("output"),
+                input: document.getElementById("command-input"),
+                currentDirectory: "~",
+                currentProjects: null,
+                projects: {
+                    "data-analytics": [
+                        {
+                            name: "Customer Segmentation",
+                            summary:
+                                "A comprehensive data analysis project using clustering techniques to segment customers based on purchasing behavior.",
+                            technologies: [
+                                "Python",
+                                "Pandas",
+                                "Scikit-learn",
+                                "Matplotlib",
+                            ],
+                            repo: "https://github.com/yourusername/customer-segmentation",
+                        },
+                        {
+                            name: "Sales Forecasting",
+                            summary:
+                                "Predictive modeling project to forecast sales using time series analysis and machine learning algorithms.",
+                            technologies: [
+                                "Python",
+                                "NumPy",
+                                "Pandas",
+                                "Prophet",
+                            ],
+                            repo: "https://github.com/yourusername/sales-forecasting",
+                        },
+                    ],
+                    "data-science": [
+                        {
+                            name: "Recommendation System",
+                            summary:
+                                "A machine learning-powered recommendation engine using collaborative filtering techniques.",
+                            technologies: [
+                                "Python",
+                                "TensorFlow",
+                                "Scikit-learn",
+                            ],
+                            repo: "https://github.com/yourusername/recommendation-system",
+                        },
+                        {
+                            name: "Image Classification",
+                            summary:
+                                "Deep learning project for image classification using convolutional neural networks.",
+                            technologies: [
+                                "Python",
+                                "TensorFlow",
+                                "Keras",
+                                "OpenCV",
+                            ],
+                            repo: "https://github.com/yourusername/image-classification",
+                        },
+                    ],
+                },
+                contacts: {
+                    email: "developer@example.com",
+                    linkedin: "https://linkedin.com/in/yourprofile",
+                    github: "https://github.com/yourusername",
+                    twitter: "https://twitter.com/yourhandle",
+                },
+                init() {
+                    this.input.addEventListener("keyup", (e) => {
+                        if (e.key === "Enter") {
+                            this.handleCommand(this.input.value.trim());
+                            this.input.value = "";
+                        }
+                    });
+                    // Add clear on Ctrl+L
+                    document.addEventListener("keydown", (e) => {
+                        if (e.ctrlKey && e.key === "l") {
+                            e.preventDefault();
+                            this.clearTerminal();
+                        }
+                    });
+                    this.printWelcome();
+                },
+                handleCommand(command) {
+                    // Echo the command
+                    this.printLine(
+                        `<span class="command">${this.currentDirectory} $ ${command}</span>`,
+                    );
+                    // Command parsing
+                    const [cmd, ...args] = command.split(" ");
+                    switch (cmd) {
+                        case "help":
+                            this.showHelp();
+                            break;
+                        case "whoami":
+                            this.showAboutMe();
+                            break;
+                        case "ls":
+                            this.listProjects(args[0]);
+                            break;
+                        case "cd":
+                            this.changeDirectory(args[0]);
+                            break;
+                        case "cat":
+                            // Join all arguments to handle project names with spaces
+                            this.showProjectDetails(args.join(" "));
+                            break;
+                        case "clear":
+                            this.clearTerminal();
+                            break;
+                        case "contact":
+                            this.showContacts();
+                            break;
+                        default:
+                            this.printLine(
+                                `<span class="error">bash: ${cmd}: command not found</span>`,
+                            );
+                    }
+                },
+                printWelcome() {
+                    this.printLine(
+                        "Welcome to my Interactive Portfolio Terminal",
+                    );
+                    this.printLine('Type "help" to see available commands');
+                },
+                showHelp() {
+                    this.printLine("Available commands:");
+                    this.printLine("- help: Show this help menu");
+                    this.printLine("- whoami: Display information about me");
+                    this.printLine(
+                        "- ls [directory]: List projects in a directory",
+                    );
+                    this.printLine(
+                        "- cd [directory]: Change current directory",
+                    );
+                    this.printLine(
+                        "- cat [project-name]: Show project summary and repository",
+                    );
+                    this.printLine("- contact: Show contact information");
+                    this.printLine("- clear: Clear the terminal");
+                },
+                showAboutMe() {
+                    this.printLine("👤 About Me:");
+                    this.printLine("Name: Jane Doe");
+                    this.printLine("Role: Data Scientist & Analytics Expert");
+                    this.printLine(
+                        "Skills: Machine Learning, Data Analysis, Python",
+                    );
+                    this.printLine("Languages: Python, R, SQL");
+                    this.printLine(
+                        "Focus: Transforming data into actionable insights",
+                    );
+                },
+                listProjects(directory = "") {
+                    const dirs = Object.keys(this.projects);
+                    if (!directory) {
+                        this.printLine("Available Directories:");
+                        dirs.forEach((dir) => this.printLine(`📁 ${dir}`));
+                        return;
+                    }
+                    const projectList = this.projects[directory];
+                    if (projectList) {
+                        this.printLine(`Projects in ${directory}:`);
+                        projectList.forEach((project) => {
+                            this.printLine(
+                                `<span class="project-name">• ${project.name}</span>`,
+                            );
+                        });
+                    } else {
+                        this.printLine(
+                            `<span class="error">Directory not found: ${directory}</span>`,
+                        );
+                    }
+                },
+                changeDirectory(directory) {
+                    const dirs = Object.keys(this.projects);
+                    if (dirs.includes(directory)) {
+                        this.currentDirectory = `~/${directory}`;
+                        this.currentProjects = this.projects[directory];
+                        this.printLine(
+                            `Changed directory to ${this.currentDirectory}`,
+                        );
+                        // Automatically list projects in the directory
+                        this.listProjects(directory);
+                    } else if (directory === "..") {
+                        this.currentDirectory = "~";
+                        this.currentProjects = null;
+                        this.printLine("Returned to home directory");
+                    } else {
+                        this.printLine(
+                            `<span class="error">bash: cd: ${directory}: No such file or directory</span>`,
+                        );
+                    }
+                },
+                showProjectDetails(projectName) {
+                    // If no current projects, search across all projects
+                    const searchProjects =
+                        this.currentProjects ||
+                        Object.values(this.projects).flat();
+                    const project = searchProjects.find(
+                        (p) =>
+                            p.name.toLowerCase() === projectName.toLowerCase(),
+                    );
+                    if (project) {
+                        this.printLine(
+                            `<span class="project-name">${project.name}</span>`,
+                        );
+                        this.printLine(
+                            `<span class="project-description">Summary: ${project.summary}</span>`,
+                        );
+                        this.printLine("Technologies:");
+                        project.technologies.forEach((tech) =>
+                            this.printLine(`  • ${tech}`),
+                        );
+                        this.printLine(
+                            `Repository: <a href="${project.repo}" class="project-repo">${project.repo}</a>`,
+                        );
+                    } else {
+                        this.printLine(
+                            `<span class="error">Project not found: ${projectName}</span>`,
+                        );
+                    }
+                },
+                showContacts() {
+                    this.printLine("📞 Contact Information:");
+                    this.printLine(
+                        `Email: <span class="project-repo">${this.contacts.email}</span>`,
+                    );
+                    this.printLine(
+                        `LinkedIn: <span class="project-repo">${this.contacts.linkedin}</span>`,
+                    );
+                    this.printLine(
+                        `GitHub: <span class="project-repo">${this.contacts.github}</span>`,
+                    );
+                    this.printLine(
+                        `Twitter: <span class="project-repo">${this.contacts.twitter}</span>`,
+                    );
+                },
+                printLine(message) {
+                    const lineElement = document.createElement("div");
+                    lineElement.innerHTML = message;
+                    this.output.appendChild(lineElement);
+                    this.output.scrollTop = this.output.scrollHeight;
+                },
+                clearTerminal() {
+                    this.output.innerHTML = "";
+                    this.printWelcome();
+                },
+            };
+            // Initialize the terminal
+            terminal.init();
+        </script>
     </body>
 </html>
