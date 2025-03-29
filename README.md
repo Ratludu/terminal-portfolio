@@ -47,7 +47,7 @@ To customize the portfolio with your information:
 3. Customize the `showAboutMe()` function with your personal information
 4. Adjust the color scheme in the CSS variables if desired
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 terminal-portfolio/
@@ -56,7 +56,7 @@ terminal-portfolio/
 └── README.md
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ratludu/terminal-portfolio/issues).
 
