@@ -47,7 +47,7 @@ To customize the portfolio with your information:
 3. Customize the `showAboutMe()` function with your personal information
 4. Adjust the color scheme in the CSS variables if desired
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 terminal-portfolio/
