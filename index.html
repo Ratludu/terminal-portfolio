@@ -28,11 +28,11 @@
                 background-color: rgba(30, 30, 46, 0.9);
                 border: 2px solid var(--blue);
                 border-radius: 10px;
-                height: 600px;
+                height: 800px;
                 overflow-y: scroll;
                 padding: 15px;
                 width: 100%;
-                max-width: 1100px;
+                max-width: 1500px;
                 margin: 0 auto;
             }
             #input-line {
@@ -40,7 +40,7 @@
             }
             #input-line::before {
                 content: "➜";
-                color: var(--green);
+                color: var(--peach);
                 margin-right: 10px;
             }
             #command-input {
@@ -91,61 +91,47 @@
                 projects: {
                     "data-analytics": [
                         {
-                            name: "Customer Segmentation",
+                            name: "Personal Finance Dashboard",
                             summary:
-                                "A comprehensive data analysis project using clustering techniques to segment customers based on purchasing behavior.",
+                                "Dashboard written in python to help track personal finances and investments.",
                             technologies: [
                                 "Python",
                                 "Pandas",
-                                "Scikit-learn",
-                                "Matplotlib",
+                                "Dash",
+                                "Plotly",
                             ],
-                            repo: "https://github.com/yourusername/customer-segmentation",
+                            repo: "https://github.com/Ratludu/Personal-Finance-Dashboard",
                         },
                         {
-                            name: "Sales Forecasting",
+                            name: "Perth House Prices",
                             summary:
-                                "Predictive modeling project to forecast sales using time series analysis and machine learning algorithms.",
-                            technologies: [
-                                "Python",
-                                "NumPy",
-                                "Pandas",
-                                "Prophet",
-                            ],
-                            repo: "https://github.com/yourusername/sales-forecasting",
+                                "Python based dashboard that visualizes house prices in Perth, Australia. It incorporates a simple elastic net model to predict house prices.",
+                            technologies: ["Python", "Pandas", "scikit-learn"],
+                            repo: "https://github.com/Ratludu/House_Price_DB",
                         },
                     ],
                     "data-science": [
                         {
-                            name: "Recommendation System",
+                            name: "Kaggle Backpack Prediction",
                             summary:
-                                "A machine learning-powered recommendation engine using collaborative filtering techniques.",
+                                "Competitive machine learning project to predict the price of backpacks. The project used a single cat boost model with a lot of feature eningeering. This resulted in a top 1% soltion! (15/3393) see private leaderboard (https://www.kaggle.com/competitions/playground-series-s5e2/leaderboard).",
                             technologies: [
                                 "Python",
-                                "TensorFlow",
+                                "Pandas",
+                                "Numpy",
                                 "Scikit-learn",
+                                "Weights and Biases",
+                                "Optuna",
+                                "CatBoost",
+                                "Nvidia RAPIDS",
                             ],
-                            repo: "https://github.com/yourusername/recommendation-system",
-                        },
-                        {
-                            name: "Image Classification",
-                            summary:
-                                "Deep learning project for image classification using convolutional neural networks.",
-                            technologies: [
-                                "Python",
-                                "TensorFlow",
-                                "Keras",
-                                "OpenCV",
-                            ],
-                            repo: "https://github.com/yourusername/image-classification",
+                            repo: "https://github.com/Ratludu/Backpack-Prediction-Challenge",
                         },
                     ],
                 },
                 contacts: {
-                    email: "developer@example.com",
-                    linkedin: "https://linkedin.com/in/yourprofile",
-                    github: "https://github.com/yourusername",
-                    twitter: "https://twitter.com/yourhandle",
+                    github: "https://github.com/Ratludu",
+                    kaggle: "https://www.kaggle.com/endingshostler",
                 },
                 init() {
                     this.input.addEventListener("keyup", (e) => {
@@ -201,7 +187,7 @@
                 },
                 printWelcome() {
                     this.printLine(
-                        "Welcome to my Interactive Portfolio Terminal",
+                        "Welcome to my Interactive Portfolio Terminal!",
                     );
                     this.printLine('Type "help" to see available commands');
                 },
@@ -222,27 +208,32 @@
                     this.printLine("- clear: Clear the terminal");
                 },
                 showAboutMe() {
-                    this.printLine("👤 About Me:");
-                    this.printLine("Name: Jane Doe");
-                    this.printLine("Role: Data Scientist & Analytics Expert");
+                    this.printLine(
+                        "About Me: I enjoy working with data—analyzing it, building dashboards, and exploring machine learning to solve problems. I like turning complex data into something clear and useful.",
+                    );
+                    this.printLine("Role: Data analyst");
                     this.printLine(
                         "Skills: Machine Learning, Data Analysis, Python",
                     );
-                    this.printLine("Languages: Python, R, SQL");
+                    this.printLine("What I know: Python, R, Linux");
                     this.printLine(
-                        "Focus: Transforming data into actionable insights",
+                        "What im learning: C, Golang, Deep Learning (keras + tensorflow)",
                     );
                 },
                 listProjects(directory = "") {
                     const dirs = Object.keys(this.projects);
                     if (!directory) {
-                        this.printLine("Available Directories:");
+                        this.printLine(
+                            "Available Directories (hint: cd data-analytics):",
+                        );
                         dirs.forEach((dir) => this.printLine(`📁 ${dir}`));
                         return;
                     }
                     const projectList = this.projects[directory];
                     if (projectList) {
-                        this.printLine(`Projects in ${directory}:`);
+                        this.printLine(
+                            `Projects in ${directory} (hint: cat ${projectList[0].name}):`,
+                        );
                         projectList.forEach((project) => {
                             this.printLine(
                                 `<span class="project-name">• ${project.name}</span>`,
@@ -304,18 +295,12 @@
                     }
                 },
                 showContacts() {
-                    this.printLine("📞 Contact Information:");
-                    this.printLine(
-                        `Email: <span class="project-repo">${this.contacts.email}</span>`,
-                    );
-                    this.printLine(
-                        `LinkedIn: <span class="project-repo">${this.contacts.linkedin}</span>`,
-                    );
+                    this.printLine("Contact Information:");
                     this.printLine(
                         `GitHub: <span class="project-repo">${this.contacts.github}</span>`,
                     );
                     this.printLine(
-                        `Twitter: <span class="project-repo">${this.contacts.twitter}</span>`,
+                        `Kaggle: <span class="project-repo">${this.contacts.kaggle}</span>`,
                     );
                 },
                 printLine(message) {
