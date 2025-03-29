@@ -19,7 +19,7 @@ A unique, interactive command-line interface portfolio website built with HTML, 
 - `cd [directory]` - Change current directory
 - `cat [project-name]` - Show project details
 - `contact` - Display contact information
-- `clear` - Clear the terminal (also works with Ctrl+L)
+- `clear` - Clear the terminal (also works with ctrl+l)
 
 ## Technologies Used
 
